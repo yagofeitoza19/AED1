@@ -1,0 +1,331 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* elementos;
+    int quantidade;
+} LISTA;
+
+LISTA* criarLista(int tamanho) {
+    LISTA* lista = (LISTA*)malloc(sizeof(LISTA));
+    lista->elementos = (int*)malloc(tamanho * sizeof(int));
+    lista->quantidade = tamanho;
+    return lista;
+}
+
+void liberarLista(LISTA* lista) {
+    free(lista->elementos);
+    free(lista);
+}
+
+void inserirElemento(LISTA* lista, int elemento) {
+    lista->elementos[lista->quantidade++] = elemento;
+}
+
+void inserirElementoOrdenado(LISTA* lista, int elemento) {
+    int i, j;
+    for (i = 0; i < lista->quantidade; i++) {
+        if (elemento < lista->elementos[i]) {
+            for (j = lista->quantidade; j > i; j--) {
+                lista->elementos[j] = lista->elementos[j - 1];
+            }
+            lista->elementos[i] = elemento;
+            lista->quantidade++;
+            return;
+        }
+    }
+    lista->elementos[lista->quantidade++] = elemento;
+}
+
+void imprimirListaIterativo(LISTA* lista) {
+    int i;
+    for (i = 0; i < lista->quantidade; i++) {
+        printf("%d ", lista->elementos[i]);
+    }
+    printf("\n");
+}
+
+int buscarElementoSequencial(LISTA* lista, int elemento) {
+    int i;
+    for (i = 0; i < lista->quantidade; i++) {
+        if (lista->elementos[i] == elemento) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int buscarElementoSequencialOrdenado(LISTA* lista, int elemento) {
+    int i;
+    for (i = 0; i < lista->quantidade; i++) {
+        if (lista->elementos[i] == elemento) {
+            return i;
+        } else if (lista->elementos[i] > elemento) {
+            return -1;
+        }
+    }
+    return -1;
+}
+
+int buscaBinariaIterativa(LISTA* lista, int elemento) {
+    int inicio = 0;
+    int fim = lista->quantidade - 1;
+    int meio;
+    
+    while (inicio <= fim) {
+        meio = (inicio + fim) / 2;
+        
+        if (lista->elementos[meio] == elemento) {
+            return meio;
+        } else if (lista->elementos[meio] < elemento) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
+        }
+    }
+    
+    return -1;
+}
+
+int buscaBinariaRecursiva(LISTA* lista, int elemento, int inicio, int fim) {
+    if (inicio > fim) {
+        return -1;
+    }
+    
+    int meio = (inicio + fim) / 2;
+    
+    if (lista->elementos[meio] == elemento) {
+        return meio;
+    } else if (lista->elementos[meio] < elemento) {
+        return buscaBinariaRecursiva(lista, elemento, meio + 1, fim);
+    } else {
+        return buscaBinariaRecursiva(lista, elemento, inicio, meio - 1);
+    }
+}
+
+void imprimirListaRecursivo(LISTA* lista, int indice) {
+    if (indice == lista->quantidade) {
+        printf("\n");
+        return;
+    }
+    
+    printf("%d ", lista->elementos[indice]);
+    imprimirListaRecursivo(lista, indice + 1);
+}
+
+int buscarMaiorIterativo(LISTA* lista) {
+    int i;
+    int maior = lista->elementos[0];
+    
+    for (i = 1; i < lista->quantidade; i++) {
+        if (lista->elementos[i] > maior) {
+            maior = lista->elementos[i];
+        }
+    }
+    
+    return maior;
+}
+
+int buscarMaiorRecursivo(LISTA* lista, int indice, int maior) {
+    if (indice == lista->quantidade) {
+        return maior;
+    }
+    
+    if (lista->elementos[indice] > maior) {
+        maior = lista->elementos[indice];
+    }
+    
+    return buscarMaiorRecursivo(lista, indice + 1, maior);
+}
+
+int buscarMenorIterativo(LISTA* lista) {
+    int i;
+    int menor = lista->elementos[0];
+    
+    for (i = 1; i < lista->quantidade; i++) {
+        if (lista->elementos[i] < menor) {
+            menor = lista->elementos[i];
+        }
+    }
+    
+    return menor;
+}
+
+int buscarMenorRecursivo(LISTA* lista, int indice, int menor) {
+    if (indice == lista->quantidade) {
+        return menor;
+    }
+    
+    if (lista->elementos[indice] < menor) {
+        menor = lista->elementos[indice];
+    }
+    
+    return buscarMenorRecursivo(lista, indice + 1, menor);
+}
+
+int calcularSomaIterativo(LISTA* lista) {
+    int i;
+    int soma = 0;
+    
+    for (i = 0; i < lista->quantidade; i++) {
+        soma += lista->elementos[i];
+    }
+    
+    return soma;
+}
+
+int calcularSomaRecursivo(LISTA* lista, int indice, int soma) {
+    if (indice == lista->quantidade) {
+        return soma;
+    }
+    
+    soma += lista->elementos[indice];
+    
+    return calcularSomaRecursivo(lista, indice + 1, soma);
+}
+
+int calcularProdutoIterativo(LISTA* lista) {
+    int i;
+    int produto = 1;
+    
+    for (i = 0; i < lista->quantidade; i++) {
+        produto *= lista->elementos[i];
+    }
+    
+    return produto;
+}
+
+int calcularProdutoRecursivo(LISTA* lista, int indice, int produto) {
+    if (indice == lista->quantidade) {
+        return produto;
+    }
+    
+    produto *= lista->elementos[indice];
+    
+    return calcularProdutoRecursivo(lista, indice + 1, produto);
+}
+
+int buscaBinariaRecursivaContagem(LISTA* lista, int elemento, int inicio, int fim, int* comparacoes) {
+    (*comparacoes)++;
+    
+    if (inicio > fim) {
+        return -1;
+    }
+    
+    int meio = (inicio + fim) / 2;
+    
+    if (lista->elementos[meio] == elemento) {
+        return meio;
+    } else if (lista->elementos[meio] < elemento) {
+        return buscaBinariaRecursivaContagem(lista, elemento, meio + 1, fim, comparacoes);
+    } else {
+        return buscaBinariaRecursivaContagem(lista, elemento, inicio, meio - 1, comparacoes);
+    }
+}
+
+int main() {
+    int tamanho;
+    int numero;
+    int posicao;
+    
+    printf("Digite o tamanho da primeira LISTA: ");
+    scanf("%d", &tamanho);
+    
+    LISTA* lista1 = criarLista(tamanho);
+    
+    // Preencher a primeira LISTA com valores não ordenados
+    for (int i = 0; i < tamanho; i++) {
+        printf("Digite o valor %d: ", i + 1);
+        scanf("%d", &numero);
+        inserirElemento(lista1, numero);
+    }
+    
+    printf("\nElementos da primeira LISTA: ");
+    imprimirListaIterativo(lista1);
+    
+    printf("\nDigite um número para buscar na primeira LISTA: ");
+    scanf("%d", &numero);
+    posicao = buscarElementoSequencial(lista1, numero);
+    if (posicao != -1) {
+        printf("O número %d foi encontrado na posição %d na primeira LISTA.\n", numero, posicao);
+    } else {
+        printf("O número %d não foi encontrado na primeira LISTA.\n", numero);
+    }
+    
+    LISTA* lista2 = criarLista(30);
+    
+    // Preencher a segunda LISTA com valores ordenados
+    for (int i = 0; i < 30; i++) {
+        numero = rand() % 100;  // Gera um número aleatório entre 0 e 99
+        inserirElementoOrdenado(lista2, numero);
+    }
+    
+    printf("\nElementos da segunda LISTA: ");
+    imprimirListaIterativo(lista2);
+    
+    printf("\nDigite um número para buscar na segunda LISTA: ");
+    scanf("%d", &numero);
+    
+    posicao = buscarElementoSequencial(lista2, numero);
+    if (posicao != -1) {
+        printf("O número %d foi encontrado na posição %d na segunda LISTA (busca sequencial).\n", numero, posicao);
+    } else {
+        printf("O número %d não foi encontrado na segunda LISTA (busca sequencial).\n", numero);
+    }
+    
+    posicao = buscarElementoSequencialOrdenado(lista2, numero);
+    if (posicao != -1) {
+        printf("O número %d foi encontrado na posição %d na segunda LISTA (busca sequencial ordenada).\n", numero, posicao);
+    } else {
+        printf("O número %d não foi encontrado na segunda LISTA (busca sequencial ordenada).\n", numero);
+    }
+    
+    posicao = buscaBinariaIterativa(lista2, numero);
+    if (posicao != -1) {
+        printf("O número %d foi encontrado na posição %d na segunda LISTA (busca binária iterativa).\n", numero, posicao);
+    } else {
+        printf("O número %d não foi encontrado na segunda LISTA (busca binária iterativa).\n", numero);
+    }
+    
+    posicao = buscaBinariaRecursiva(lista2, numero, 0, lista2->quantidade - 1);
+    if (posicao != -1) {
+        printf("O número %d foi encontrado na posição %d na segunda LISTA (busca binária recursiva).\n", numero, posicao);
+    } else {
+        printf("O número %d não foi encontrado na segunda LISTA (busca binária recursiva).\n", numero);
+    }
+    
+    printf("\nMudanças nos códigos das operações de busca:\n");
+    
+    int comparacoes = 0;
+    posicao = buscarElementoSequencial(lista2, numero);
+    printf("Busca sequencial: %d comparações.\n", comparacoes);
+    
+    comparacoes = 0;
+    posicao = buscarElementoSequencialOrdenado(lista2, numero);
+    printf("Busca sequencial ordenada: %d comparações.\n", comparacoes);
+    
+    comparacoes = 0;
+    posicao = buscaBinariaIterativa(lista2, numero);
+    printf("Busca binária iterativa: %d comparações.\n", comparacoes);
+    
+    comparacoes = 0;
+    posicao = buscaBinariaRecursivaContagem(lista2, numero, 0, lista2->quantidade - 1, &comparacoes);
+    printf("Busca binária recursiva: %d comparações.\n", comparacoes);
+    
+    int maior = buscarMaiorIterativo(lista1);
+    printf("\nO maior elemento da primeira LISTA é: %d\n", maior);
+    
+    int menor = buscarMenorIterativo(lista1);
+    printf("O menor elemento da primeira LISTA é: %d\n", menor);
+    
+    int soma = calcularSomaIterativo(lista1);
+    printf("A soma de todos os elementos da primeira LISTA é: %d\n", soma);
+    
+    int produto = calcularProdutoIterativo(lista1);
+    printf("O produto de todos os elementos da primeira LISTA é: %d\n", produto);
+    
+    liberarLista(lista1);
+    liberarLista(lista2);
+    
+    return 0;
+}
