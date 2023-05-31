@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_ALUNOS 100
+
+typedef struct {
+    int elementos[MAX_ALUNOS];
+    int quantidade;
+} ListaAlunos;
+
+void inicializarLista(ListaAlunos* lista) {
+    lista->quantidade = 0;
+}
+
+void liberarLista(ListaAlunos* lista) {
+    lista->quantidade = 0;
+}
+
+int tamanhoLista(ListaAlunos* lista) {
+    return lista->quantidade;
+}
+
+int listaCheia(ListaAlunos* lista) {
+    return lista->quantidade == MAX_ALUNOS;
+}
+
+int listaVazia(ListaAlunos* lista) {
+    return lista->quantidade == 0;
+}
+
+void exibirLista(ListaAlunos* lista) {
+    if (listaVazia(lista)) {
+        printf("Lista vazia.\n");
+        return;
+    }
+    
+    printf("Lista de Alunos:\n");
+    for (int i = 0; i < lista->quantidade; i++) {
+        printf("%d ", lista->elementos[i]);
+    }
+    printf("\n");
+}
+
+int encontrarPosicaoInsercao(ListaAlunos* lista, int matricula) {
+    int i = 0;
+    while (i < lista->quantidade && lista->elementos[i] < matricula) {
+        i++;
+    }
+    return i;
+}
+
+void inserirElemento(ListaAlunos* lista, int matricula) {
+    if (listaCheia(lista)) {
+        printf("Erro: Lista cheia, nao e possivel inserir elemento.\n");
+        return;
+    }
+
+    int posicao = encontrarPosicaoInsercao(lista, matricula);
+
+    for (int i = lista->quantidade - 1; i >= posicao; i--) {
+        lista->elementos[i + 1] = lista->elementos[i];
+    }
+
+    lista->elementos[posicao] = matricula;
+    lista->quantidade++;
+}
+
+int buscarElemento(ListaAlunos* lista, int matricula) {
+    for (int i = 0; i < lista->quantidade; i++) {
+        if (lista->elementos[i] == matricula) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void excluirElemento(ListaAlunos* lista, int matricula) {
+    if (listaVazia(lista)) {
+        printf("Erro: Lista vazia, nao e possivel excluir elemento.\n");
+        return;
+    }
+
+    int posicao = buscarElemento(lista, matricula);
+
+    if (posicao == -1) {
+        printf("Erro: Elemento nao encontrado na lista.\n");
+        return;
+    }
+
+    for (int i = posicao; i < lista->quantidade - 1; i++) {
+        lista->elementos[i] = lista->elementos[i + 1];
+    }
+
+    lista->quantidade--;
+}
+
+void alterarMatricula(ListaAlunos* lista, int matriculaAntiga, int matriculaNova) {
+    if (listaVazia(lista)) {
+        printf("Erro: Lista vazia, nao e possivel alterar matricula.\n");
+        return;
+    }
+
+    int posicao = buscarElemento(lista, matriculaAntiga);
+
+    if (posicao == -1) {
+        printf("Erro: Matricula nao encontrada na lista.\n");
+        return;
+    }
+
+    lista->elementos[posicao] = matriculaNova;
+}
+
+int main() {
+    ListaAlunos lista;
+    inicializarLista(&lista);
+
+    inserirElemento(&lista, 20);
+    inserirElemento(&lista, 10);
+    inserirElemento(&lista, 30);
+    inserirElemento(&lista, 15);
+
+    exibirLista(&lista);
+
+    excluirElemento(&lista, 20);
+
+    exibirLista(&lista);
+
+    alterarMatricula(&lista, 15, 25);
+
+    exibirLista(&lista);
+
+    liberarLista(&lista);
+
+    return 0;
+}
+
